@@ -2,41 +2,69 @@
 using System.Collections;
 using LitJson;
 
-public class UserLoader : MonoBehaviour
+namespace User.Detail
 {
-    public event System.Action<UserData> UserLoaded;
-
-    public void LoadUser(System.Action<UserData> userLoaded)
+    public class UserLoader : MonoBehaviour, IUserLoader
     {
-        Debug.Log("LoadUser");
-        UserLoaded = userLoaded;
-        StartCoroutine(MakeRequest());
-    }
+        public event System.Action UserLoaded;
 
-    private IEnumerator MakeRequest()
-    {
-        WWW request;
-        yield return request = new WWW("http://jsonplaceholder.typicode.com/users");
+        public static UserLoader Instance
+        {
+            get;
+            private set;
+        }
 
-        if (request != null)
-            LoadUser(request.text);
-        else
-            RaiseUserLoaded(null);
-    }
+        public bool IsLoaded
+        {
+            get;
+            private set;
+        }
 
-    private void LoadUser(string json)
-    {
-        JsonData data = JsonMapper.ToObject(json);
-        int index = Random.Range(0, data.Count);
-        UserData user = JsonMapper.ToObject<UserData>(data[index].ToJson());
-        RaiseUserLoaded(user);
-    }
+        public UserData Data
+        {
+            get;
+            private set;
+        }
 
-    private void RaiseUserLoaded(UserData data)
-    {
-        if (UserLoaded != null)
-            UserLoaded(data);
+        private void Awake()
+        {
+            Instance = this;
+        }
 
-        UserLoaded = null;
+        private void Start()
+        {
+            IsLoaded = false;
+            StartCoroutine(MakeRequest());
+        }
+
+        private IEnumerator MakeRequest()
+        {
+            WWW request;
+            yield return request = new WWW("http://jsonplaceholder.typicode.com/users");
+
+            if (request != null)
+                LoadUser(request.text);
+            else
+                RaiseUserLoaded(null);
+        }
+
+        private void LoadUser(string json)
+        {
+            JsonData data = JsonMapper.ToObject(json);
+            int index = Random.Range(0, data.Count);
+            UserData user = JsonMapper.ToObject<UserData>(data[index].ToJson());
+            RaiseUserLoaded(user);
+        }
+
+        private void RaiseUserLoaded(UserData data)
+        {
+            Data = data;
+
+            if (UserLoaded != null)
+                UserLoaded();
+
+            IsLoaded = true;
+            UserLoaded = null;
+        }
     }
 }
