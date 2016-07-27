@@ -6,7 +6,7 @@ namespace Gameplay.Detail
     public class GameController : MonoBehaviour, IGameController
     {
         [SerializeField]
-        private EnemyController enemyController;
+        private EnemiesController enemyController;
         [SerializeField]
         private Ally ally;
 
@@ -36,7 +36,7 @@ namespace Gameplay.Detail
         {
             State = GameState.Playing;
             ally.Play(OnAllyDied);
-            enemyController.Spawn();
+            enemyController.Play();
         }
 
         private void OnAllyDied()

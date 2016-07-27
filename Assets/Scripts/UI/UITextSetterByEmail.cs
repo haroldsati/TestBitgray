@@ -1,11 +1,12 @@
-﻿namespace UI.Detail
-{
+﻿using User;
 
+namespace UI.Detail
+{
     public class UITextSetterByEmail : UITextSetter, IUserInfoSetter
     {
-        public void SetUserData(UserData data)
+        public void SetUserData(UserDataWrapper data)
         {
-            UpdateText(data.email);
+            UpdateText(data.Email);
         }
     }
 }

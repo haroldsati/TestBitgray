@@ -2,9 +2,9 @@
 using System.Collections;
 using System;
 
-namespace Gameplay
+namespace Gameplay.Detail
 {
-    public class Ally : MonoBehaviour
+    public class Ally : Character
     {
         private event Action Died;
 
@@ -19,8 +19,9 @@ namespace Gameplay
             currentHealth = maxHealth;
         }
 
-        public void TakeDamage(int damage)
+        public override void TakeDamage(int damage)
         {
+            base.TakeDamage(damage);
             currentHealth -= damage;
             if (currentHealth <= 0)
             {

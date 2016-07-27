@@ -4,11 +4,13 @@ using LitJson;
 
 namespace User.Detail
 {
-    public class UserLoader : MonoBehaviour, IUserLoader
+    public class UserDataLoader : MonoBehaviour, IUserDataLoader
     {
         public event System.Action UserLoaded;
 
-        public static UserLoader Instance
+        private UserData data;
+
+        public static UserDataLoader Instance
         {
             get;
             private set;
@@ -20,10 +22,9 @@ namespace User.Detail
             private set;
         }
 
-        public UserData Data
+        public UserDataWrapper Data
         {
-            get;
-            private set;
+            get { return new UserDataWrapper(data); }
         }
 
         private void Awake()
@@ -58,7 +59,7 @@ namespace User.Detail
 
         private void RaiseUserLoaded(UserData data)
         {
-            Data = data;
+            this.data = data;
 
             if (UserLoaded != null)
                 UserLoaded();

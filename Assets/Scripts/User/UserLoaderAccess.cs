@@ -4,9 +4,9 @@ namespace User
 {
     public static class UserLoaderAccess
     {
-        public static IUserLoader Access
+        public static IUserDataLoader Access
         {
-            get { return UserLoader.Instance; }
+            get { return UserDataLoader.Instance; }
         }
     }
 }

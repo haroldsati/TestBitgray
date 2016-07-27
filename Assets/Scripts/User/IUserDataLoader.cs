@@ -1,9 +1,9 @@
 ﻿namespace User
 {
-    public interface IUserLoader
+    public interface IUserDataLoader
     {
         event System.Action UserLoaded;
         bool IsLoaded { get; }
-        UserData Data { get; }
+        UserDataWrapper Data { get; }
     }
 }

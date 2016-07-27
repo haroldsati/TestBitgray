@@ -1,12 +1,11 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System;
 
-namespace Gameplay
+namespace Gameplay.Detail
 {
-    public class Enemy : MonoBehaviour
+    public class Enemy : Character
     {
-        private event Action<bool/*wasKilled*/,Enemy> Destroyed;
+        private event Action<bool/*wasKilled*/,Enemy> Died;
 
         [SerializeField]
         private int damage;
@@ -15,12 +14,12 @@ namespace Gameplay
         private Collider myCollider;
         private bool isAlive;
 
-        public void Initialize(Vector3 target, Action<bool, Enemy> destroyed)
+        public void Initialize(Vector3 target, Action<bool, Enemy> died)
         {
             agent = GetComponent<NavMeshAgent>();
             myCollider = GetComponent<Collider>();
 
-            Destroyed = destroyed;
+            Died = died;
             isAlive = true;
             agent.SetDestination(target);
         }
@@ -33,27 +32,20 @@ namespace Gameplay
 
         private void Update()
         {
-            ProcessInput();
+            if(isAlive)
+                ProcessInput();
         }
 
         private void ProcessInput()
         {
-            if (isAlive && Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0))
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
                 if (myCollider.Raycast(ray, out hit, 100.0F))
                     RaiseDestroyed(true);
             }
-        }
-
-        private void RaiseDestroyed(bool wasKilled)
-        {
-            if (Destroyed != null)
-                Destroyed(wasKilled, this);
-
-            Explode();
-        }
+        }        
 
         private void OnCollisionEnter(Collision collision)
         {
@@ -64,10 +56,18 @@ namespace Gameplay
             }
         }
 
+        private void RaiseDestroyed(bool wasKilled)
+        {
+            if (Died != null)
+                Died(wasKilled, this);
+
+            Explode();
+        }
+
         private void MakeDamage(GameObject go)
         {
-            Ally ally = go.GetComponentInChildren<Ally>(true);
-            ally.TakeDamage(damage);
+            Character character = go.GetComponentInChildren<Character>(true);
+            character.TakeDamage(damage);
         }
 
         private void Explode()
