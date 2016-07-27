@@ -3,37 +3,46 @@ using System;
 
 namespace Gameplay.Detail
 {
+
     public class Enemy : Character
     {
         private event Action<bool/*wasKilled*/,Enemy> Died;
-
+        
+        [SerializeField]
+        private ParticleSystem explosion;
+        [SerializeField]
+        private GameObject model;
+        [SerializeField]
+        private EnemyAnimator animator;
         [SerializeField]
         private int damage;
 
-        private NavMeshAgent agent;
         private Collider myCollider;
         private bool isAlive;
 
         public void Initialize(Vector3 target, Action<bool, Enemy> died)
         {
-            agent = GetComponent<NavMeshAgent>();
             myCollider = GetComponent<Collider>();
 
             Died = died;
             isAlive = true;
-            agent.SetDestination(target);
+            animator.Initialize(transform, target);
         }
 
-        public void SetParent(Transform parent, Vector3 position)
+        public void SetParent(Transform parent, Vector3 position, float scale)
         {
             transform.SetParent(parent);
+            transform.localScale = new Vector3 (scale, scale, scale);
             transform.position = position;
         }
 
         private void Update()
         {
             if(isAlive)
+            {
                 ProcessInput();
+                animator.Update();
+            }
         }
 
         private void ProcessInput()
@@ -52,7 +61,7 @@ namespace Gameplay.Detail
             if (isAlive && collision.gameObject.tag == "Target")
             {
                 RaiseDestroyed(false);
-                MakeDamage(collision.gameObject);
+                MakeDamage(collision.gameObject, collision.collider);
             }
         }
 
@@ -64,16 +73,26 @@ namespace Gameplay.Detail
             Explode();
         }
 
-        private void MakeDamage(GameObject go)
+        private void MakeDamage(GameObject go, Collider col)
         {
-            Character character = go.GetComponentInChildren<Character>(true);
-            character.TakeDamage(damage);
+            Character character = go.GetComponentInParent<Character>();
+            if (character != null)
+                character.TakeDamage(damage, col);
+            else
+                Debug.LogWarning("There is not a Character component in the target");
         }
 
         private void Explode()
         {
             isAlive = false;
-            agent.Stop();
+            explosion.Play(true);
+            animator.Stop();
+            Invoke("OnExplosionFinished", explosion.duration);
+            model.SetActive(false);
+        }
+
+        private void OnExplosionFinished()
+        {
             Destroy(gameObject);
         }
     }

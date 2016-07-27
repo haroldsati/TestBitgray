@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System;
 
 namespace Gameplay.Detail
@@ -8,6 +7,8 @@ namespace Gameplay.Detail
     {
         private event Action Died;
 
+        [SerializeField]
+        private AllyAnimator animator;
         [SerializeField]
         private int maxHealth;
 
@@ -21,18 +22,21 @@ namespace Gameplay.Detail
         public void Play(Action died)
         {
             Died = died;
+            animator.Initialize(transform);
             currentHealth = maxHealth;
         }
 
-        public override void TakeDamage(int damage)
+        public override void TakeDamage(int damage, Collider hit)
         {
-            base.TakeDamage(damage);
             currentHealth -= damage;
+
             if (currentHealth <= 0)
             {
                 currentHealth = 0;
                 RaiseDied();
             }
+
+            animator.AnimateHit(hit);
         }
 
         private void RaiseDied()

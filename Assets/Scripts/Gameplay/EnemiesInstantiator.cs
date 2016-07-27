@@ -11,6 +11,8 @@ namespace Gameplay.Detail
         [SerializeField]
         private List<GameObject> enemyPrefabs;
         [SerializeField]
+        private float scale;
+        [SerializeField]
         private Vector2 minRangeToDeploy;
         [SerializeField]
         private Vector2 maxRangeToDeploy;
@@ -30,7 +32,7 @@ namespace Gameplay.Detail
             int index = Random.Range(0, enemyPrefabs.Count - 1);
             GameObject instance = GameObject.Instantiate(enemyPrefabs[index]);
             Enemy enemy = instance.GetComponent<Enemy>();
-            enemy.SetParent(enemiesParent, GetInitialPosition());
+            enemy.SetParent(enemiesParent, GetInitialPosition(), scale);
             return enemy;
         }
 

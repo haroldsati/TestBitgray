@@ -6,7 +6,6 @@ namespace Gameplay.Detail
 {
     public class EnemiesController : MonoBehaviour
     {
-
         [SerializeField]
         private Transform target;
         [SerializeField]

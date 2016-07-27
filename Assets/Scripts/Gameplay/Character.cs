@@ -11,7 +11,7 @@ namespace Gameplay.Detail
 
     public abstract class Character : MonoBehaviour
     {
-        public virtual void TakeDamage(int damage)
+        public virtual void TakeDamage(int damage, Collider hit)
         {
         }
     }
