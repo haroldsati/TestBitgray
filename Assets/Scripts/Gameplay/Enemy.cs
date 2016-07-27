@@ -51,7 +51,7 @@ namespace Gameplay.Detail
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
-                if (myCollider.Raycast(ray, out hit, 100.0F))
+                if (myCollider.Raycast(ray, out hit, 200.0F))
                     RaiseDestroyed(true);
             }
         }        

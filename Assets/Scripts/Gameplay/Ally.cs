@@ -10,9 +10,11 @@ namespace Gameplay.Detail
         [SerializeField]
         private AllyAnimator animator;
         [SerializeField]
+        private ParticleSystem explosion; 
+        [SerializeField]
         private int maxHealth;
 
-        private float currentHealth;
+        private float currentHealth;       
 
         public float HealthPercent
         {
@@ -35,8 +37,8 @@ namespace Gameplay.Detail
                 currentHealth = 0;
                 RaiseDied();
             }
-
-            animator.AnimateHit(hit);
+            else
+                animator.AnimateHit(hit);
         }
 
         private void RaiseDied()
@@ -45,6 +47,12 @@ namespace Gameplay.Detail
                 Died();
 
             Died = null;
+            animator.Fall();
+        }
+
+        public void Explode()
+        {
+            explosion.Play();
         }
     }
 }

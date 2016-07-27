@@ -53,6 +53,7 @@ namespace Gameplay.Detail
             position.x = Random.Range(minRangeToDeploy.x, maxRangeToDeploy.x);
             position.x *= ChooseSide() ? 1 : -1;
             position.z = Random.Range(-maxRangeToDeploy.y, maxRangeToDeploy.y);
+            position.y = 50;
             return position;
         }
 

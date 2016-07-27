@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using DG.Tweening;
 
 namespace Gameplay.Detail
 {
@@ -9,6 +10,11 @@ namespace Gameplay.Detail
         public virtual void Initialize(Transform transform)
         {
             this.transform = transform;
+        }
+
+        public void Stop()
+        {
+            transform.DOKill();
         }
     }
 }

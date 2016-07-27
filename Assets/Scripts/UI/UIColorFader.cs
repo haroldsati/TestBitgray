@@ -16,12 +16,21 @@ public class UIColorFader : MonoBehaviour
 
     private void Awake()
     {
-        graphic = GetComponent<Graphic>();
-        initialColor = graphic.color;
+        Initialize();
+    }
+
+    private void Initialize()
+    {
+        if (graphic == null)
+        {
+            graphic = GetComponent<Graphic>();
+            initialColor = graphic.color;
+        }
     }
 
     public void Play()
     {
+        Initialize();
         gameObject.SetActive(true);
         graphic.color = initialColor;
         graphic.DOFade(0, fadeDuration).SetDelay(delay).OnComplete(FadeCompleted);

@@ -33,11 +33,6 @@ namespace Gameplay.Detail
         {
             if(isPrepare)
                 transform.position = Vector3.MoveTowards(transform.position, target, Time.deltaTime * velocity);
-        }
-
-        public void Stop()
-        {
-            transform.DOKill();
-        }
+        }        
     }
 }

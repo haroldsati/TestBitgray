@@ -9,10 +9,29 @@ namespace Gameplay.Detail
     {
         [SerializeField]
         private HitDetector hitDetector;
+        [SerializeField]
+        private Animation anim;
+
+        private Vector3 localPosition;
+        private Quaternion localRotation;
+        private Vector3 localScale;
 
         public override void Initialize(Transform transform)
         {
             base.Initialize(transform);
+            if(localScale == Vector3.zero)
+            {
+                localPosition = transform.localPosition;
+                localRotation = transform.localRotation;
+                localScale = transform.localScale;
+            }
+            else
+            {
+                transform.localPosition = localPosition;
+                transform.localRotation = localRotation;
+                transform.localScale = localScale;
+            }
+
             AnimateIdle();
         }
 
@@ -37,7 +56,14 @@ namespace Gameplay.Detail
 
         private void AnimateIdle()
         {
+            transform.DOKill();
             transform.DOShakePosition(30, 0.5f, 1).OnComplete(AnimateIdle);
+        }
+
+        public void Fall()
+        {
+            transform.DOKill();
+            anim.Play();
         }
     }
 }
