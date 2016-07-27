@@ -2,61 +2,79 @@
 using System.Collections;
 using System;
 
-public class Enemy : MonoBehaviour
+namespace Gameplay
 {
-    private event Action Killed;
-    private NavMeshAgent agent;
-    private Collider myCollider;
-
-    public void Initialize(Vector3 target, Action killed)
+    public class Enemy : MonoBehaviour
     {
-        agent = GetComponent<NavMeshAgent>();
-        myCollider = GetComponent<Collider>();
+        private event Action<bool/*wasKilled*/,Enemy> Destroyed;
 
-        Killed = killed;
-        SetTarget(target);
-    }
+        [SerializeField]
+        private int damage;
 
-    public void SetParent(Transform parent, Vector3 position)
-    {
-        transform.SetParent(parent);
-        transform.position = position;
-    }
+        private NavMeshAgent agent;
+        private Collider myCollider;
+        private bool isAlive;
 
-    private void Update()
-    {
-        ProcessInput();
-    }
-
-    private void ProcessInput()
-    {
-        if (Input.GetMouseButtonDown(0))
+        public void Initialize(Vector3 target, Action<bool, Enemy> destroyed)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (myCollider.Raycast(ray, out hit, 100.0F))
-                RaiseKilled();
+            agent = GetComponent<NavMeshAgent>();
+            myCollider = GetComponent<Collider>();
+
+            Destroyed = destroyed;
+            isAlive = true;
+            agent.SetDestination(target);
+        }
+
+        public void SetParent(Transform parent, Vector3 position)
+        {
+            transform.SetParent(parent);
+            transform.position = position;
+        }
+
+        private void Update()
+        {
+            ProcessInput();
+        }
+
+        private void ProcessInput()
+        {
+            if (isAlive && Input.GetMouseButtonDown(0))
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+                if (myCollider.Raycast(ray, out hit, 100.0F))
+                    RaiseDestroyed(true);
+            }
+        }
+
+        private void RaiseDestroyed(bool wasKilled)
+        {
+            if (Destroyed != null)
+                Destroyed(wasKilled, this);
+
+            Explode();
+        }
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (isAlive && collision.gameObject.tag == "Target")
+            {
+                RaiseDestroyed(false);
+                MakeDamage(collision.gameObject);
+            }
+        }
+
+        private void MakeDamage(GameObject go)
+        {
+            Ally ally = go.GetComponentInChildren<Ally>(true);
+            ally.TakeDamage(damage);
+        }
+
+        private void Explode()
+        {
+            isAlive = false;
+            agent.Stop();
+            Destroy(gameObject);
         }
     }
-
-    private void RaiseKilled()
-    {
-        if (Killed != null)
-            Killed();
-
-        agent.Stop();
-        Destroy(gameObject);
-    }
-
-    public void SetTarget(Vector3 targetPosition)
-    {
-        agent.SetDestination(targetPosition);
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.tag == "Target")
-            agent.Stop();
-    }
-
 }

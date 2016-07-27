@@ -3,20 +3,22 @@ using System.Collections.Generic;
 
 namespace Gameplay.Detail
 {
-    public class EnemySpawner : MonoBehaviour
+    public class EnemyController : MonoBehaviour
     {
         [SerializeField]
         private Transform target;
         [SerializeField]
         private Transform enemiesParent;
         [SerializeField]
-        private List<GameObject> enemies;
+        private List<GameObject> enemyPrefabs;
         [SerializeField]
         private Vector2 minRangeToDeploy;
         [SerializeField]
         private Vector2 maxRangeToDeploy;
         [SerializeField]
         private int initialAmountOfEnemies;
+
+        private List<Enemy> enemies;
 
         public int KilledEnemies
         {
@@ -27,7 +29,15 @@ namespace Gameplay.Detail
         public void Spawn()
         {
             KilledEnemies = 0;
+            enemies = new List<Enemy>();
             InstantieEnemies(initialAmountOfEnemies);
+        }
+
+        public void Stop()
+        {
+            for (int i = enemies.Count - 1; i >= 0; i--)
+                Destroy(enemies[i].gameObject);
+            enemies.Clear();
         }
 
         private void InstantieEnemies(int amountOfEnemies)
@@ -38,9 +48,10 @@ namespace Gameplay.Detail
 
         private void InstantiateEnemy()
         {
-            int index = Random.Range(0, enemies.Count - 1);
-            GameObject instance = Instantiate(enemies[index]);
+            int index = Random.Range(0, enemyPrefabs.Count - 1);
+            GameObject instance = Instantiate(enemyPrefabs[index]);
             Enemy enemy = instance.GetComponent<Enemy>();
+            enemies.Add(enemy);
             enemy.SetParent(enemiesParent, GetInitialPosition());
             enemy.Initialize(target.position, OnEnemyKilled);
         }
@@ -78,11 +89,16 @@ namespace Gameplay.Detail
             return Random.Range(0, 100) < 50 ? false : true;
         }
 
-        private void OnEnemyKilled()
+        private void OnEnemyKilled(bool wasKilled, Enemy enemy)
         {
-            KilledEnemies++;
-            if (KilledEnemies / 2 >= 1)
-                InstantieEnemies(KilledEnemies / 2);
+            enemies.Remove(enemy);
+
+            if (wasKilled)
+            {
+                KilledEnemies++;
+                if (KilledEnemies / 2 >= 1)
+                    InstantieEnemies(KilledEnemies / 2);
+            }
         }
     }
 }

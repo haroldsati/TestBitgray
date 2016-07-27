@@ -1,11 +1,14 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Gameplay.Detail
 {
     public class GameController : MonoBehaviour, IGameController
     {
         [SerializeField]
-        private EnemySpawner enemySpawner;
+        private EnemyController enemyController;
+        [SerializeField]
+        private Ally ally;
 
         public static GameController Instance
         {
@@ -26,13 +29,20 @@ namespace Gameplay.Detail
 
         public int Points
         {
-            get { return enemySpawner.KilledEnemies; }
+            get { return enemyController.KilledEnemies; }
         }
 
         public void Play()
         {
             State = GameState.Playing;
-            enemySpawner.Spawn();
+            ally.Play(OnAllyDied);
+            enemyController.Spawn();
+        }
+
+        private void OnAllyDied()
+        {
+            enemyController.Stop();
+            State = GameState.Over;
         }
     }
 }
