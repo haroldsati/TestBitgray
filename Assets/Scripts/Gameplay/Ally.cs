@@ -13,6 +13,11 @@ namespace Gameplay.Detail
 
         private float currentHealth;
 
+        public float HealthPercent
+        {
+            get { return (float)currentHealth / (float)maxHealth; }
+        }
+
         public void Play(Action died)
         {
             Died = died;

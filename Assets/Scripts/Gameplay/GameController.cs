@@ -32,6 +32,11 @@ namespace Gameplay.Detail
             get { return enemyController.KilledEnemies; }
         }
 
+        public float AllyHealth
+        {
+            get { return ally.HealthPercent; }
+        }
+
         public void Play()
         {
             State = GameState.Playing;
