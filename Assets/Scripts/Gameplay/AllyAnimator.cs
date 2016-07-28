@@ -10,6 +10,8 @@ namespace Gameplay.Detail
         [SerializeField]
         private HitDetector hitDetector;
         [SerializeField]
+        private float shake = 0.1f;
+        [SerializeField]
         private Animation anim;
 
         private Vector3 localPosition;
@@ -38,7 +40,7 @@ namespace Gameplay.Detail
         public void AnimateHit(Collider hit)
         {
             transform.DOKill();
-            transform.DOShakePosition(1).OnComplete(AnimateIdle);
+            transform.DOShakePosition(1, shake).OnComplete(AnimateIdle);
 
             switch (hitDetector.DetectPosition(hit))
             {
@@ -57,7 +59,7 @@ namespace Gameplay.Detail
         private void AnimateIdle()
         {
             transform.DOKill();
-            transform.DOShakePosition(30, 0.5f, 1).OnComplete(AnimateIdle);
+            transform.DOShakePosition(30, shake/2, 1).OnComplete(AnimateIdle);
         }
 
         public void Fall()

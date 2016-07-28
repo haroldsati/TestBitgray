@@ -9,7 +9,7 @@ namespace Gameplay.Detail
         [SerializeField]
         private Transform target;
         [SerializeField]
-        private int initialAmountOfEnemies;
+        private int initialAmountOfEnemies;        
         [SerializeField]
         private EnemiesInstantiator instantiator;
 

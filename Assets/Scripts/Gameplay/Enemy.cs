@@ -33,7 +33,7 @@ namespace Gameplay.Detail
         {
             transform.SetParent(parent);
             transform.localScale = new Vector3 (scale, scale, scale);
-            transform.position = position;
+            transform.localPosition = position;
         }
 
         private void Update()
@@ -51,7 +51,7 @@ namespace Gameplay.Detail
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
-                if (myCollider.Raycast(ray, out hit, 200.0F))
+                if (myCollider.Raycast(ray, out hit, 2000.0F))
                     RaiseDestroyed(true);
             }
         }        

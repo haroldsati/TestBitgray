@@ -16,6 +16,8 @@ namespace Gameplay.Detail
         private Vector2 minRangeToDeploy;
         [SerializeField]
         private Vector2 maxRangeToDeploy;
+        [SerializeField]
+        private float yOffset = 3;
 
         public List<Enemy> InstantieEnemies(int amountOfEnemies)
         {
@@ -39,6 +41,7 @@ namespace Gameplay.Detail
         private Vector3 GetInitialPosition()
         {
             Vector3 position = Vector3.zero;
+            position.y = yOffset;
 
             if (ChooseSide())
                 position = SetUpXSide(position);
@@ -53,7 +56,6 @@ namespace Gameplay.Detail
             position.x = Random.Range(minRangeToDeploy.x, maxRangeToDeploy.x);
             position.x *= ChooseSide() ? 1 : -1;
             position.z = Random.Range(-maxRangeToDeploy.y, maxRangeToDeploy.y);
-            position.y = 50;
             return position;
         }
 
