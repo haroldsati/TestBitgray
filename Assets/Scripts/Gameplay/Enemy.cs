@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using System;
+using Vuforia;
 
 namespace Gameplay.Detail
 {
-
     public class Enemy : Character
     {
         private event Action<bool/*wasKilled*/,Enemy> Died;
@@ -17,16 +17,16 @@ namespace Gameplay.Detail
         [SerializeField]
         private int damage;
 
-        private Collider myCollider;
         private bool isAlive;
+        private EnemyInput input = new EnemyInput();
+        private bool isEnable;
 
         public void Initialize(Vector3 target, Action<bool, Enemy> died)
         {
-            myCollider = GetComponent<Collider>();
-
             Died = died;
             isAlive = true;
             animator.Initialize(transform, target);
+            input.Initialize(GetComponent<Collider>());
         }
 
         public void SetParent(Transform parent, Vector3 position, float scale)
@@ -38,7 +38,7 @@ namespace Gameplay.Detail
 
         private void Update()
         {
-            if(isAlive)
+            if(isEnable && isAlive)
             {
                 ProcessInput();
                 animator.Update();
@@ -47,13 +47,8 @@ namespace Gameplay.Detail
 
         private void ProcessInput()
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                RaycastHit hit;
-                if (myCollider.Raycast(ray, out hit, 2000.0F))
-                    RaiseDestroyed(true);
-            }
+            if (input.WasTouched())
+                RaiseDestroyed(true);
         }        
 
         private void OnCollisionEnter(Collision collision)
@@ -95,5 +90,11 @@ namespace Gameplay.Detail
         {
             Destroy(gameObject);
         }
+
+        public void SetEnable(bool isEnable)
+        {
+            this.isEnable = isEnable;
+        }
+        
     }
 }
