@@ -19,7 +19,6 @@ namespace Gameplay.Detail
 
         private bool isAlive;
         private EnemyInput input = new EnemyInput();
-        private bool isEnable;
 
         public void Initialize(Vector3 target, Action<bool, Enemy> died)
         {
@@ -38,7 +37,7 @@ namespace Gameplay.Detail
 
         private void Update()
         {
-            if(isEnable && isAlive)
+            if(isAlive)
             {
                 ProcessInput();
                 animator.Update();
@@ -89,12 +88,6 @@ namespace Gameplay.Detail
         private void OnExplosionFinished()
         {
             Destroy(gameObject);
-        }
-
-        public void SetEnable(bool isEnable)
-        {
-            this.isEnable = isEnable;
-        }
-        
+        }        
     }
 }
