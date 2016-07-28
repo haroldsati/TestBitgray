@@ -21,20 +21,31 @@ namespace Gameplay.Detail
         public override void Initialize(Transform transform)
         {
             base.Initialize(transform);
-            if(localScale == Vector3.zero)
-            {
-                localPosition = transform.localPosition;
-                localRotation = transform.localRotation;
-                localScale = transform.localScale;
-            }
-            else
-            {
-                transform.localPosition = localPosition;
-                transform.localRotation = localRotation;
-                transform.localScale = localScale;
-            }
-
+            Stop();
+            SetUpInitialInfo(transform);
             AnimateIdle();
+        }
+
+        private void SetUpInitialInfo(Transform transform)
+        {
+            if (localScale == Vector3.zero)
+                SaveInitialInfo(transform);
+            else
+                ApplyInitialInfo(transform);
+        }
+
+        private void ApplyInitialInfo(Transform transform)
+        {
+            transform.localPosition = localPosition;
+            transform.localRotation = localRotation;
+            transform.localScale = localScale;
+        }
+
+        private void SaveInitialInfo(Transform transform)
+        {
+            localPosition = transform.localPosition;
+            localRotation = transform.localRotation;
+            localScale = transform.localScale;
         }
 
         public void AnimateHit(Collider hit)
@@ -66,6 +77,12 @@ namespace Gameplay.Detail
         {
             transform.DOKill();
             anim.Play();
+        }
+
+        public override void Stop()
+        {
+            base.Stop();
+            anim.Stop();
         }
     }
 }

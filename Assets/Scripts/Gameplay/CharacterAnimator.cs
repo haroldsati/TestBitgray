@@ -12,7 +12,7 @@ namespace Gameplay.Detail
             this.transform = transform;
         }
 
-        public void Stop()
+        public virtual void Stop()
         {
             transform.DOKill();
         }
